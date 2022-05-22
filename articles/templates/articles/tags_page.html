@@ -1,0 +1,15 @@
+{% extends 'articles/base_articles.html' %}
+
+{% block title %}
+Категории
+{% endblock %}
+
+{% block content %}
+<ul class="" style="margin-top: 100px;">
+    {% for tag in tags %}
+    <li class="">
+      <a class="" href="{{ tag.get_absolute_url }}">{{ tag.label }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

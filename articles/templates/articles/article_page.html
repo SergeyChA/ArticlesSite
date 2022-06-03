@@ -4,52 +4,104 @@
     {{ article.title }}
 {% endblock %}
 
+
 {% block content %}
-<div class="card" style="max-width: 1440px; margin-top: 5rem">
-    <div class="row no-gutters">
-        <div class="col-md-2">
-            <img src="{{ article.image }}" class="card-img-top" alt="pic">
-        </div>
-        <div class="col-md-10">
-            <div class="card-body">
-                <h5 class="card-title">
-                    {{ article.title }} 
-                </h5>
-                <p class="card-text">
-                    {{ article.body }}
-                </p>
-                <a href="{{ article.get_absolute_url }}" class="btn btn-primary">Понравилось</a>
+<style>
+    .likes {
+        cursor: pointer;    
+    }
+</style>
+<div class="row" style="margin-top: 5rem">
+    <div class="card" style="max-width: 1440px; margin: auto;">
+        <div class="row no-gutters">
+            <div class="col-md-2">
+                <div class="card-header"></div>
+                {% if article.img %}
+                    <img src="{{ article.img.url }}" class="card-img-top" alt="pic">
+                {% else %}
+                    <img src="/static/images/def.png" class="card-img-top" alt="pic">
+                {% endif %}
             </div>
-            <div class="card-text">
-                <small class="text-muted">
-                    {{ article.pub_date }}
-                </small>
-            </div>
-            <div class="card-text">
-                <small class="text-muted">
-                    {% for state in article.state_set.all %}
-                    <i class="fa-solid fa-thumbs-up fa-lg"></i> {{ state.likes }}
-                    <i class="fa-solid fa-eye fa-lg"></i> {{ state.views }}
-                    {% endfor %}   
-                </small>
-            </div>
-            <div class="card-text">
-                <small class="text-muted">
-                    {% for tag in article.tags.all %}
-                    <i class="fa-solid fa-tags fa-lg"></i> <a class="" href="{{ tag.get_absolute_url }}">{{ tag.label }} </a>
+            <div class="col-md-10">
+                <div class="card-header">
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        {{ article.title }} 
+                    </h5>
+                    <small class="text">
+                        {% for state in article.states.all %}
+                            <i class="likes fa-solid fa-thumbs-up fa-lg text-primary">&nbsp{{ state.likes }}&nbsp</i>
+                            <i class="fa-solid fa-eye fa-lg text-danger">&nbsp{{ state.views }}&nbsp</i> 
+                        {% endfor %}
+                        {{ article.pub_date|date:'d-m-Y  H:i:s' }}   
+                    </small>
+                    <p class="card-text">
+                        {% autoescape off %}
+                        {{ article.body|linebreaks }}
+                        {% endautoescape %}
+                    </p>
+                </div>
+                <button class="btn btn-primary"><a href="{{ article.get_update_url }}" style="color:white; text-decoration: none;">Редактировать</a></button>
+                <button class="btn btn-danger"><a href="{{ article.get_delete_url }}" style="color:white; text-decoration: none;">Удалить</a></button>
+                <div class="card-text">
+                    <small class="text-muted">
+                        {% for tag in article.tags.all %}
+                            <i class="fa-solid fa-tags fa-lg"></i> <a class="" href="{{ tag.get_absolute_url }}">{{ tag.label }} </a>
+                        {% endfor %}
+                    </small>
+                </div>
+                <div class="card-footer mt-3">
+                    Комментарии:
+                    {% if article.comments.all %}
+                    {% for comment in article.comments.all reversed %}
+                    <hr>
+                    <hr>
+                    <p><strong>{{ comment.author}}</strong></p>
+                    <p>{{ comment.text}}</p>
+                    <p>{{ comment.pub_date|date:'d-m-Y  H:i:s' }}</p>
                     {% endfor %}
-                </small>
-            </div>
-            <div class="card-footer mt-3">
-                Комментарии:
-                {% for comment in article.comment_set.all %}
-                <p>{{ comment.author}}</p>
-                <p>{{ comment.text}}</p>
-                <p>{{ comment.pub_date }}</p>
-                {% endfor %}
+                    {% else %}
+                    будь первым кто оставит комментарий
+                    {% endif %}
+                    <!-- Form comments -->
+                    <form style="margin-top: 2rem;" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}  
+                        <div class="form-group col-ms-6">
+                            {% if field.errors %}
+                                <div class="alert alert-danger">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                
+                            {{ field.label }}
+                            {{ field }}
+                        </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary">Отправить</button>
+                    </form>
+                    <!-- End form -->
+                </div>
             </div>
         </div>
     </div>
+    <!-- Likes button -->
+    <script> 
+        let button = document.querySelector('.likes')
+        button.onclick = async function(event) {
+            let body = new FormData();
+            body.append('statistics','like');
+            let request = await fetch("{% url 'article_detail_url' slug=article.slug %}", {
+                method: 'POST',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}, 
+                body: body});
+            console.log(request);      
+            let response = await request.json();
+            document.querySelector('.likes').innerHTML = response['likes'];         
+        };
+    </script>
+    <!-- End  -->
 </div>
-
 {% endblock %}
+

@@ -1,0 +1,26 @@
+{% extends 'articles/base_articles.html' %}
+
+{% block title %}
+    Article Create
+{% endblock %}
+
+{% block content %}
+<div class="" style="margin-top: 5rem">  
+    <form action="{% url 'article_create_url' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}  
+        <div class="form-group col-md-6 pl-0">
+            {% if field.errors %}
+                <div class="alert alert-danger">
+                    {{ field.errors }}
+                </div>
+            {% endif %}
+
+            {{ field.label }}
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Опубликовать</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'articles/base_articles.html' %}
+
+{% block title %}
+    Tag Delete {{ article.title|title }}
+{% endblock %}
+
+{% block content %} 
+<div class="" style="margin-top: 5rem;">  
+    <form action="{{ article.get_delete_url }}" method="post">
+        {% csrf_token %}
+        <h3>Вы точно хотите удалить статью <b>"{{ article.title|title}}"</b>?</h3>
+        <button class="btn btn-primary"><a href="{{ article.get_absolute_url }}" style="color:white; text-decoration: none;">Отмена</a></button>
+        <button type="submit" class="btn btn-danger">Удалить</button>
+    </form>
+</div>
+{% endblock %}

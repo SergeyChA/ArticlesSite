@@ -3,7 +3,7 @@
         <div class="row no-gutters">
             <div class="col-md-4">
                 {% if article.img %}
-                    <img src="{{ article.img.url }}" class="card-img-top" alt="pic">
+                    <img  height= '240px'; width="240px" src="{{ article.img.url }}" class="card-img-top" alt="pic">
                 {% else %}
                     <img src="/static/images/def.png" class="card-img-top" alt="pic">
                 {% endif %}
@@ -22,12 +22,12 @@
                     </small>
                     <p class="card-text">
                         {% autoescape off %}
-                            {{ article.body|truncatewords:20 }}
+                            {{ article.body|truncatechars:150 }}
                         {% endautoescape %}
                     </p>
                     <a href="{{ article.get_absolute_url }}" class="btn btn-primary">Читать далее</a>
                 </div>
-                <div class="card-text">
+                <div class="card-text ml-4">
                     <small class="text-muted">
                         {% for tag in article.tags.all %}
                         <i class="fa-solid fa-tags fa-lg"></i> <a class="" href="{{ tag.get_absolute_url }}">{{ tag.label }} </a>

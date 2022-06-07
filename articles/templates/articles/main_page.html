@@ -7,7 +7,7 @@
 
 {% block content %}
     <div class="row" style="margin-top: 5rem">
-        {% for article in articles %}
+        {% for article in page.object_list %}
         
             {% include 'articles/includes/article_card_template.html' %}
 

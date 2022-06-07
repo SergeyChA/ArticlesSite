@@ -6,13 +6,20 @@
 
 {% block content %}
     <div class="row" style="margin-top: 5rem">
-        <h2 class="col-md-5">Все посты с категорией '{{ tag.label|title }}':</h2>
+        <div class="col-md-6">
+            <h2>Все посты с категорией '{{ tag.label|title }}':</h2>
+        </div>
+        {% if request.user.is_authenticated and request.user.is_staff %}
+            <div class="col-md-6">
+                <button class="btn btn-primary"><a href="{{ tag.get_update_url }}" style="color:white; text-decoration: none;">Редактировать</a></button>
+                <button class="btn btn-danger"><a href="{{ tag.get_delete_url }}" style="color:white; text-decoration: none;">Удалить</a></button>
+            </div>
+        {% endif %}   
         {% for article in tag.articles.all reversed %}
         
             {% include 'articles/includes/article_card_template.html' %}
 
         {% endfor %}
     </div>
-    <button class="btn btn-primary"><a href="{{ tag.get_update_url }}" style="color:white; text-decoration: none;">Редактировать</a></button>
-    <button class="btn btn-danger"><a href="{{ tag.get_delete_url }}" style="color:white; text-decoration: none;">Удалить</a></button>   
+    
 {% endblock %}

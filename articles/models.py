@@ -29,6 +29,10 @@ class Tag(models.Model):
         self.slug = gen_slug(self.label)
         super().save(*args, **kwargs)
 
+    class Meta:
+        ordering = ['-id']
+      
+
 class Article(models.Model):
     title = models.CharField('название статьи', max_length=200, db_index=True)
     slug = models.SlugField('URL', unique=True, blank=True, max_length=200)
@@ -44,14 +48,18 @@ class Article(models.Model):
         return reverse('article_detail_url', kwargs={'slug': self.slug})
 
     def get_update_url(self):
-        return reverse('article_update_url',kwargs={'slug': self.slug})
+        return reverse('article_update_url', kwargs={'slug': self.slug})
 
     def get_delete_url(self):
-        return reverse('article_delete_url',kwargs={'slug': self.slug})
+        return reverse('article_delete_url', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
         self.slug = gen_slug(self.title)
         super().save(*args, **kwargs)
+    
+    class Meta:
+        ordering = ['-pub_date']
+
 
     
 class Comment(models.Model):
@@ -62,6 +70,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.author
+
+    class Meta:
+        ordering = ['-pub_date']
 
 class State(models.Model):
     article = models.ForeignKey(Article, related_name='states', on_delete=models.CASCADE, verbose_name='статья')

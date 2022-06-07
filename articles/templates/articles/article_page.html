@@ -11,7 +11,7 @@
         cursor: pointer;    
     }
 </style>
-<div class="row" style="margin-top: 5rem">
+<div class="col" style="margin-top: 5rem">
     <div class="card" style="max-width: 1440px; margin: auto;">
         <div class="row no-gutters">
             <div class="col-md-2">
@@ -31,8 +31,8 @@
                     </h5>
                     <small class="text">
                         {% for state in article.states.all %}
-                            <i class="likes fa-solid fa-thumbs-up fa-lg text-primary">&nbsp{{ state.likes }}&nbsp</i>
-                            <i class="fa-solid fa-eye fa-lg text-danger">&nbsp{{ state.views }}&nbsp</i> 
+                            <i class="likes fa-solid fa-thumbs-up fa-lg text-primary">&nbsp&nbsp{{ state.likes }}&nbsp&nbsp</i>
+                            <i class="fa-solid fa-eye fa-lg text-danger">&nbsp&nbsp{{ state.views }}&nbsp&nbsp</i> 
                         {% endfor %}
                         {{ article.pub_date|date:'d-m-Y  H:i:s' }}   
                     </small>
@@ -42,12 +42,14 @@
                         {% endautoescape %}
                     </p>
                 </div>
-                <button class="btn btn-primary"><a href="{{ article.get_update_url }}" style="color:white; text-decoration: none;">Редактировать</a></button>
-                <button class="btn btn-danger"><a href="{{ article.get_delete_url }}" style="color:white; text-decoration: none;">Удалить</a></button>
+                {% if request.user.is_authenticated and request.user.is_staff %}
+                    <button class="btn btn-primary"><a href="{{ article.get_update_url }}" style="color:white; text-decoration: none;">Редактировать</a></button>
+                    <button class="btn btn-danger"><a href="{{ article.get_delete_url }}" style="color:white; text-decoration: none;">Удалить</a></button>
+                {% endif %}
                 <div class="card-text">
                     <small class="text-muted">
                         {% for tag in article.tags.all %}
-                            <i class="fa-solid fa-tags fa-lg"></i> <a class="" href="{{ tag.get_absolute_url }}">{{ tag.label }} </a>
+                            <i class="fa-solid fa-tags fa-lg"></i><a class="" href="{{ tag.get_absolute_url }}">&nbsp{{ tag.label }}&nbsp</a>
                         {% endfor %}
                     </small>
                 </div>
@@ -65,6 +67,7 @@
                     будь первым кто оставит комментарий
                     {% endif %}
                     <!-- Form comments -->
+                    {% if request.user.is_authenticated %}
                     <form style="margin-top: 2rem;" method="post">
                         {% csrf_token %}
                         {% for field in form %}  
@@ -81,6 +84,7 @@
                         {% endfor %}
                         <button type="submit" class="btn btn-primary">Отправить</button>
                     </form>
+                    {% endif %}
                     <!-- End form -->
                 </div>
             </div>
@@ -98,7 +102,9 @@
                 body: body});
             console.log(request);      
             let response = await request.json();
-            document.querySelector('.likes').innerHTML = response['likes'];         
+            console.log(response)
+            document.querySelector('.likes').innerHTML = '&nbsp&nbsp' + response['likes'] + '&nbsp&nbsp';
+                     
         };
     </script>
     <!-- End  -->

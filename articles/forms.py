@@ -20,8 +20,14 @@ class ArticleForm(forms.ModelForm):
 
         widgets = {'title': forms.TextInput(attrs={'class': 'form-control'}),
                    'body': forms.Textarea(attrs={'class': 'form-control'}),
-                   'tags': forms.SelectMultiple(attrs={'class': 'form-control'}),         
+                   'tags': forms.SelectMultiple(attrs={'class': 'col-md-6 form-control'}),         
         }
+    # Validator
+    # def clean_title(self):
+    #     title = self.cleaned_data['title'] 
+    #     if title[0].isdigit():
+    #         raise ValidationError('ERRRRRORRRR')
+    #     return title
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -31,6 +37,7 @@ class CommentForm(forms.ModelForm):
         widgets = {'author': forms.TextInput(attrs={'class': 'form-control'}),
                    'text': forms.Textarea(attrs={'class': 'form-control'})
         }
+
 
 
     

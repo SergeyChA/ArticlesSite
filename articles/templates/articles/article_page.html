@@ -56,7 +56,7 @@
                 <div class="card-footer mt-3">
                     Комментарии:
                     {% if article.comments.all %}
-                    {% for comment in article.comments.all reversed %}
+                    {% for comment in page.object_list %}
                     <hr>
                     <hr>
                     <p><strong>{{ comment.author}}</strong></p>
@@ -66,6 +66,11 @@
                     {% else %}
                     будь первым кто оставит комментарий
                     {% endif %}
+                    <!-- Pagination comments -->
+                    {% block pagination_comments %}
+                        {% include 'articles/includes/pagination_template.html' %}
+                    {% endblock %}
+                    <!-- End pagination -->
                     <!-- Form comments -->
                     {% if request.user.is_authenticated %}
                     <form style="margin-top: 2rem;" method="post">
@@ -110,4 +115,6 @@
     <!-- End  -->
 </div>
 {% endblock %}
+
+
 

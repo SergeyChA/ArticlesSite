@@ -15,7 +15,7 @@
                 <button class="btn btn-danger"><a href="{{ tag.get_delete_url }}" style="color:white; text-decoration: none;">Удалить</a></button>
             </div>
         {% endif %}   
-        {% for article in tag.articles.all reversed %}
+        {% for article in page.object_list %}
         
             {% include 'articles/includes/article_card_template.html' %}
 
@@ -23,3 +23,8 @@
     </div>
     
 {% endblock %}
+
+{% block pages %}
+    {% include 'articles/includes/pagination_template.html' %}
+{% endblock %}
+

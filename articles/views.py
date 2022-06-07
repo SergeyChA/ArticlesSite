@@ -1,4 +1,5 @@
-from django.db.models import F
+from multiprocessing import context
+from django.db.models import F, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View
 from django.http import JsonResponse
@@ -12,10 +13,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django.core.paginator import Paginator
 
-def articles_list(request):
-    articles = Article.objects.all()
-
-    paginator = Paginator(articles, 6)
+def pagination(request, obj_list):
+    paginator = Paginator(obj_list, 6)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
 
@@ -37,6 +36,18 @@ def articles_list(request):
         'prev_page': prev_page,
         'next_page': next_page
     }
+    return context
+
+def articles_list(request):
+    search_query = request.GET.get('search', '')
+
+    if search_query:
+        articles = Article.objects.filter(Q(title__icontains=search_query) | Q(body__icontains=search_query))
+    else:
+        articles = Article.objects.all()
+
+    context = pagination(request, articles)
+    context.update({'search_query': search_query})
     return render(request, 'articles/main_page.html', context=context)
 
 
@@ -48,7 +59,12 @@ class ArticleDetail(View):
             article.states.update(views=F('views') + 1)
             request.session[slug] = slug
         form = CommentForm()
-        return render(request, 'articles/article_page.html', context={'article': article, 'form':form})
+
+        obj_list = article.comments.all()
+        context = pagination(request, obj_list)
+        context.update({'article': article, 'form': form })
+
+        return render(request, 'articles/article_page.html', context=context)
 
     def post(self, request, slug):
         article = get_object_or_404(Article, slug__iexact=slug)
@@ -105,7 +121,12 @@ def tags_list(request):
 class TagDetail(View):
     def get(self, request, slug):
         tag = get_object_or_404(Tag, slug__iexact=slug)
-        return render(request, 'articles/tag_page.html', context={'tag': tag})
+
+        obj_list = tag.articles.all()
+        context = pagination(request, obj_list) 
+        context.update({'tag': tag})
+        
+        return render(request, 'articles/tag_page.html', context=context)
     
 class TagCreate(LoginRequiredMixin, View):
     raise_exception = True

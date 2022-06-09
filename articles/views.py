@@ -1,17 +1,66 @@
-from multiprocessing import context
+import email
 from django.db.models import F, Q
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View
+from django.views.generic import View, CreateView
 from django.http import JsonResponse
 from django.urls import reverse
 
-from .models import Article, Tag, State, Comment
+from .models import Article, Tag, State, Comment, Account
 from .utils import ObjectUpdateMixin, ObjectDeleteMixin
-from .forms import ArticleForm, TagForm, CommentForm
+from .forms import ArticleForm, RegisterForm, TagForm, CommentForm, LoginForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout
 
 from django.core.paginator import Paginator
+
+
+class RegisterUser(View):
+    def get(self, request):
+        form =RegisterForm()
+        return render(request, 'articles/register_page.html', context={'form': form})
+
+    def post(self, request):
+        if request.POST:
+            bound_form = RegisterForm(request.POST)
+            if User.objects.filter(email__iexact=request.POST['email']):
+                messages.error(request, 'Такой email уже зарегистрирован')
+
+            elif bound_form.is_valid():
+                bound_form.save()
+                messages.success(request, 'Вы зарегистрированы')
+                return redirect('login_url')
+
+            return render(request, 'articles/register_page.html', context={'form': bound_form})
+        
+
+class LoginUser(View):
+    def get(self, request):
+        form =LoginForm()
+        return render(request, 'articles/login_page.html', context={'form': form})
+
+    def post(self, request):
+        if request.POST:
+            bound_form = LoginForm(data=request.POST)
+
+            if bound_form.is_valid():
+                user = bound_form.get_user()
+                login(request, user)
+                return redirect('articles_list_url')
+            
+            messages.error(request, 'Введите правильный логин и пароль')
+            return render(request, 'articles/login_page.html', context={'form': bound_form})
+
+def account_user(request):
+    return render(request, 'articles/account_page.html')
+
+def logout_user(request):
+    logout(request)
+    return redirect('login_url')
+
+
 
 def pagination(request, obj_list):
     paginator = Paginator(obj_list, 6)

@@ -34,19 +34,18 @@
               <a class="nav-link" href="{% url 'tag_create_url' %}">Создать категорию</a>
             </li>
             {% endif %}
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Разное
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Действие</a>
-                <a class="dropdown-item" href="#">Другое действие</a>
-                <a class="dropdown-item" href="#">Что-то еще здесь</a>
-              </div>
+            {% if request.user.is_authenticated %}
+              <span class="navbar-text">
+                Добро пожаловать, <a href="{% url 'account_url' %}">{{ user.username }}</a> | <a href="{% url 'logout_url' %}">Выход</a> 
+              </span>
+            {% else %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'register_url' %}">Регистрация</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Отключенный</a>
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'login_url' %}">Вход</a>
             </li>
+            {% endif %}
           </ul>
           <form class="form-inline my-2 my-lg-0" action="{% url 'articles_list_url' %}">
             <input class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Поиск" name="search">

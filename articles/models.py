@@ -1,8 +1,10 @@
+from tabnanny import verbose
 from django.db import models
 
 from django.urls import reverse
 from django.utils.text import slugify
 from time import time
+from django.contrib.auth.models import User
 
 def gen_slug(s):
     new_slug = slugify(s, allow_unicode=True)
@@ -31,7 +33,9 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ['-id']
-      
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+   
 
 class Article(models.Model):
     title = models.CharField('название статьи', max_length=200, db_index=True)
@@ -40,7 +44,8 @@ class Article(models.Model):
     body = models.TextField('текст статьи', db_index=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name='articles', verbose_name='категории')
     pub_date = models.DateTimeField('дата публикации', auto_now_add=True, db_index=True)
-
+    
+    
     def __str__(self):
         return self.title
 
@@ -59,9 +64,9 @@ class Article(models.Model):
     
     class Meta:
         ordering = ['-pub_date']
+        verbose_name = 'Статья'
+        verbose_name_plural = 'Статьи'
 
-
-    
 class Comment(models.Model):
     article = models.ForeignKey(Article, related_name='comments', on_delete=models.CASCADE)
     author = models.CharField('имя автора', max_length=50)
@@ -73,7 +78,9 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-pub_date']
-
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        
 class State(models.Model):
     article = models.ForeignKey(Article, related_name='states', on_delete=models.CASCADE, verbose_name='статья')
     views = models.IntegerField('количество просмотров', default=0)
@@ -81,4 +88,18 @@ class State(models.Model):
 
     def __str__(self):
         return str(self.likes)
+
+    class Meta:
+        verbose_name = 'Статистика'
+        verbose_name_plural = 'Статистика'
+
+class Account(models.Model):
+    user = models.OneToOneField(User, related_name='user', verbose_name='имя пользователя', on_delete=models.CASCADE)
+    avatar = models.ImageField('аватар', upload_to='avatars/', null=True, blank=True)
+    likes_articles = models.TextField(blank=True, null=True)
+    sex = models.CharField('пол', max_length=150, blank=True, null=True)
+    age = models.CharField('возраст', max_length=150, blank=True, null=True)
+    interests = models.CharField('интересы', max_length=150, blank=True, null=True)
+
+
     

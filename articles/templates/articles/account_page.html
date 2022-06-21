@@ -3,3 +3,36 @@
 {% block title %}
     {{ user.username }}
 {% endblock %}
+
+{% block content %}
+<div class="col" style="margin-top: 5rem">
+    <div class="col-sm-6">
+        <div class="card mb-3">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    {% if user.accounts.avatar %}
+                        <img  height= '240px'; width="240px" src="{{ user.accounts.avatar.url }}" class="card-img-top" alt="pic">
+                    {% else %}
+                        <img src="/static/images/account_icon.png" class="card-img-top" alt="pic">
+                    {% endif %}
+                </div>
+                <div class="row-sm-6 ml-5">
+                    <p class="card-text">
+                        Имя пользователя: {{ user.username }}
+                    </p>
+                    <p class="card-text">
+                        Пол: {% if not user.accounts.sex %} {% else %} {{ user.accounts.sex }} {% endif %}
+                    </p>
+                    <p class="card-text">
+                        Возраст: {% if not user.accounts.age %} {% else %} {{ user.accounts.age }} {% endif %}
+                    </p>
+                    <p class="card-text">
+                        Интересы: {% if not user.accounts.interests %} {% else %} {{ user.accounts.interests }} {% endif %}
+                    </p>
+                    <button class="btn btn-primary"><a href="{% url 'account_update_url' %}" style="color:white; text-decoration: none;">Редактировать</a></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

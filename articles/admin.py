@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Article, Tag, Comment, State
+from .models import Article, Tag, Comment, State, Account
 
 
 class ArticleAdmin(admin.ModelAdmin):
@@ -27,8 +27,14 @@ class StateAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'article')
     search_fields = ('article',)
     
+class AccountAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'sex', 'age', 'interests')
+    list_display_links = ('id', 'user')
+    search_fields = ('user',)
+
 
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(State, StateAdmin)
+admin.site.register(Account, AccountAdmin)

@@ -1,4 +1,3 @@
-import email
 from django.db.models import F, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import View, CreateView
@@ -7,7 +6,7 @@ from django.urls import reverse
 
 from .models import Article, Tag, State, Comment, Account
 from .utils import ObjectUpdateMixin, ObjectDeleteMixin
-from .forms import ArticleForm, RegisterForm, TagForm, CommentForm, LoginForm
+from .forms import AccountForm, ArticleForm, RegisterForm, TagForm, CommentForm, LoginForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -23,17 +22,35 @@ class RegisterUser(View):
         return render(request, 'articles/register_page.html', context={'form': form})
 
     def post(self, request):
-        if request.POST:
-            bound_form = RegisterForm(request.POST)
-            if User.objects.filter(email__iexact=request.POST['email']):
-                messages.error(request, 'Такой email уже зарегистрирован')
+        bound_form = RegisterForm(request.POST)
+        if User.objects.filter(email__iexact=request.POST['email']):
+            messages.error(request, 'Такой email уже зарегистрирован')
 
-            elif bound_form.is_valid():
-                bound_form.save()
-                messages.success(request, 'Вы зарегистрированы')
-                return redirect('login_url')
+        elif bound_form.is_valid():
+            new_user = bound_form.save()
+            new_accaunt = Account(user_id = new_user.id)
+            new_accaunt.save()
+            messages.success(request, 'Вы зарегистрированы')
+            return redirect('login_url')
 
-            return render(request, 'articles/register_page.html', context={'form': bound_form})
+        return render(request, 'articles/register_page.html', context={'form': bound_form})
+
+class AccountUser(View):
+    def get(self, request):
+        account = Account.objects.get(user_id=request.user.id)
+        bound_form = AccountForm(instance=account)
+        return render(request, 'articles/account_update.html', context={'form': bound_form})
+
+    def post(self, request):
+        account = Account.objects.get(user_id=request.user.id)
+        bound_form = AccountForm(request.POST, request.FILES, instance=account)
+        
+        if bound_form.is_valid():
+            bound_form.save()
+            return redirect('account_url')
+
+        return render(request, 'articles/account_update.html', context={'form': bound_form})
+
         
 
 class LoginUser(View):
@@ -138,10 +155,7 @@ class ArticleCreate(LoginRequiredMixin, View):
         return render(request, 'articles/article_create.html', context={'form': form})
 
     def post(self, request):
-        if request.FILES:
-            bound_form = ArticleForm(request.POST, request.FILES)
-        else:
-            bound_form = ArticleForm(request.POST)
+        bound_form = ArticleForm(request.POST, request.FILES)
 
         if bound_form.is_valid():
             new_article = bound_form.save()

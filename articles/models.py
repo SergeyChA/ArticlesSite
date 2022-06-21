@@ -28,8 +28,11 @@ class Tag(models.Model):
         return reverse('tag_delete_url',kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
-        self.slug = gen_slug(self.label)
-        super().save(*args, **kwargs)
+        if not self.slug:
+            self.slug = gen_slug(self.label)
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-id']
@@ -59,8 +62,11 @@ class Article(models.Model):
         return reverse('article_delete_url', kwargs={'slug': self.slug})
 
     def save(self, *args, **kwargs):
-        self.slug = gen_slug(self.title)
-        super().save(*args, **kwargs)
+        if not self.slug:
+            self.slug = gen_slug(self.title)
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
     
     class Meta:
         ordering = ['-pub_date']
@@ -94,12 +100,15 @@ class State(models.Model):
         verbose_name_plural = 'Статистика'
 
 class Account(models.Model):
-    user = models.OneToOneField(User, related_name='user', verbose_name='имя пользователя', on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='accounts', verbose_name='имя пользователя', on_delete=models.CASCADE)
     avatar = models.ImageField('аватар', upload_to='avatars/', null=True, blank=True)
     likes_articles = models.TextField(blank=True, null=True)
     sex = models.CharField('пол', max_length=150, blank=True, null=True)
     age = models.CharField('возраст', max_length=150, blank=True, null=True)
     interests = models.CharField('интересы', max_length=150, blank=True, null=True)
 
+    class Meta:
+        verbose_name = 'Аккаунт'
+        verbose_name_plural = 'Аккаунты'
 
     

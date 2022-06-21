@@ -14,7 +14,8 @@ class ObjectUpdateMixin:
     
     def post(self, request, slug):
         obj = self.model.objects.get(slug__iexact=slug)
-        bount_form = self.form_model(request.POST, instance=obj)
+        bount_form = self.form_model(request.POST, request.FILES, instance=obj)
+        
 
         if bount_form.is_valid():
             update_obj = bount_form.save()

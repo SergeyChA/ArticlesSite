@@ -1,12 +1,12 @@
 {% extends 'articles/base_articles.html' %}
 
 {% block title %}
-    Article Update {{ article.title }}
+    Редактирование аккаунта
 {% endblock %}
 
 {% block content %}
-<div class="" style="margin-top: 5rem"> 
-    <form action="{{ article.get_update_url }}" method="post" enctype="multipart/form-data">
+<div class="" style="margin-top: 5rem">
+    <form action="{% url 'account_update_url' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% for field in form %}  
         <div class="form-group col-md-6 pl-0">
@@ -20,8 +20,7 @@
             {{ field }}
         </div>
         {% endfor %}
-        <button class="btn btn-primary"><a href="{{ article.get_absolute_url }}" style="color:white; text-decoration: none;">Отмена</a></button>
-        <button type="submit" class="btn btn-danger">Изменить</button>
+        <button type="submit" class="btn btn-primary">Изменить</button>
     </form>
 </div>
 {% endblock %}

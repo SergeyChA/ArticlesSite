@@ -1,7 +1,7 @@
 from dataclasses import field
 from enum import unique
 from django import forms
-from .models import Article, Tag, Comment
+from .models import Article, Tag, Comment, Account
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
@@ -54,6 +54,17 @@ class RegisterForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label='Имя пользователя', widget= forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(label='Пароль', widget= forms.PasswordInput(attrs={'class': 'form-control'}))
+
+class AccountForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ['sex', 'age', 'interests', 'avatar']
+
+        widgets = {'sex': forms.TextInput(attrs={'class': 'form-control'}),
+                   'age': forms.NumberInput(attrs={'class': 'form-control'}),
+                   'interests': forms.TextInput(attrs={'class': 'form-control'}),         
+        }
+
 
 
         

@@ -1,6 +1,6 @@
 from django.db.models import F, Q
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View, CreateView
+from django.views.generic import View, CreateView, ListView
 from django.http import JsonResponse
 from django.urls import reverse
 
@@ -28,7 +28,7 @@ class RegisterUser(View):
 
         elif bound_form.is_valid():
             new_user = bound_form.save()
-            new_accaunt = Account(user_id = new_user.id)
+            new_accaunt = Account(user_id = new_user.pk)
             new_accaunt.save()
             messages.success(request, 'Вы зарегистрированы')
             return redirect('login_url')
@@ -37,12 +37,12 @@ class RegisterUser(View):
 
 class AccountUser(View):
     def get(self, request):
-        account = Account.objects.get(user_id=request.user.id)
+        account = Account.objects.get(user_id=request.user.pk)
         bound_form = AccountForm(instance=account)
         return render(request, 'articles/account_update.html', context={'form': bound_form})
 
     def post(self, request):
-        account = Account.objects.get(user_id=request.user.id)
+        account = Account.objects.get(user_id=request.user.pk)
         bound_form = AccountForm(request.POST, request.FILES, instance=account)
         
         if bound_form.is_valid():
@@ -135,14 +135,33 @@ class ArticleDetail(View):
     def post(self, request, slug):
         article = get_object_or_404(Article, slug__iexact=slug)
         if request.POST.get('statistics') == 'like':
-            article.states.update(likes=F('likes') + 1)
-            likes = str(article.states.get().likes)    
+            
+            user = User.objects.get(username=request.user)
+            if user.accounts.likes_articles:
+                list_slug = user.accounts.likes_articles.split(',')
+                if article.slug in list_slug:
+                    list_slug.remove(article.slug)
+                    article.states.update(likes=F('likes') - 1)
+                    user.accounts.likes_articles = ','.join(list_slug)        
+                else:
+                    list_slug.append(article.slug)
+                    article.states.update(likes=F('likes') + 1)
+                    user.accounts.likes_articles = ','.join(list_slug)
+            else:
+                user.accounts.likes_articles = article.slug + ','
+                article.states.update(likes=F('likes') + 1)
+            user.accounts.save()
+            
+            likes = str(article.states.get().likes)   
             return JsonResponse({"likes": likes})
 
         bound_form = CommentForm(request.POST)
         if bound_form.is_valid():
             new_comment = bound_form.save(commit=False)
             new_comment.article = article
+            author = User.objects.get(username=request.user)
+            new_comment.author_id = author.pk
+            new_comment.author_avatar = author.accounts.avatar
             new_comment.save()
         return redirect(article)
         

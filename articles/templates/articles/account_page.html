@@ -11,7 +11,7 @@
             <div class="row no-gutters">
                 <div class="col-md-4">
                     {% if user.accounts.avatar %}
-                        <img  height= '240px'; width="240px" src="{{ user.accounts.avatar.url }}" class="card-img-top" alt="pic">
+                        <img src="{{ user.accounts.avatar.url }}" class="card-img-top" alt="pic">
                     {% else %}
                         <img src="/static/images/account_icon.png" class="card-img-top" alt="pic">
                     {% endif %}

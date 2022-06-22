@@ -6,11 +6,13 @@
 
 
 {% block content %}
-<style>
-    .likes {
-        cursor: pointer;    
-    }
-</style>
+{% if request.user.is_authenticated %}
+    <style>
+        .likes {
+            cursor: pointer;    
+        }
+    </style>
+{% endif %}
 <div class="col" style="margin-top: 5rem">
     <div class="card" style="max-width: 1440px; margin: auto;">
         <div class="row no-gutters">
@@ -27,7 +29,7 @@
                 </div>
                 <div class="card-body">
                     <h5 class="card-title">
-                        {{ article.title }} 
+                        {{ article.title }}
                     </h5>
                     <small class="text">
                         {% for state in article.states.all %}
@@ -56,15 +58,26 @@
                 <div class="card-footer mt-3">
                     Комментарии:
                     {% if article.comments.all %}
-                    {% for comment in page.object_list %}
-                    <hr>
-                    <hr>
-                    <p><strong>{{ comment.author}}</strong></p>
-                    <p>{{ comment.text}}</p>
-                    <p>{{ comment.pub_date|date:'d-m-Y  H:i:s' }}</p>
-                    {% endfor %}
+                        {% for comment in page.object_list %}
+                        <hr>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-1">
+                                {% if comment.author_avatar %}
+                                <img src="{{ comment.author_avatar.url }}" alt="pic" class="card-img-top">
+                                {% else %}
+                                <img src="/static/images/account_icon.png" class="card-img-top" alt="pic">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-11">
+                                <p><strong>{{ comment.author}}</strong></p>
+                                <p>{{ comment.text}}</p>
+                                <p>{{ comment.pub_date|date:'d-m-Y  H:i:s' }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
                     {% else %}
-                    будь первым кто оставит комментарий
+                        {{ user.username }} будь первым кто оставит комментарий
                     {% endif %}
                     <!-- Pagination comments -->
                     {% block pagination_comments %}
@@ -96,22 +109,24 @@
         </div>
     </div>
     <!-- Likes button -->
-    <script> 
-        let button = document.querySelector('.likes')
-        button.onclick = async function(event) {
-            let body = new FormData();
-            body.append('statistics','like');
-            let request = await fetch("{% url 'article_detail_url' slug=article.slug %}", {
-                method: 'POST',
-                headers: {'X-CSRFToken': '{{ csrf_token }}'}, 
-                body: body});
-            console.log(request);      
-            let response = await request.json();
-            console.log(response)
-            document.querySelector('.likes').innerHTML = '&nbsp&nbsp' + response['likes'] + '&nbsp&nbsp';
-                     
-        };
-    </script>
+    {% if request.user.is_authenticated %}
+        <script> 
+            let button = document.querySelector('.likes')
+            button.onclick = async function(event) {
+                let body = new FormData();
+                body.append('statistics','like');
+                let request = await fetch("{% url 'article_detail_url' slug=article.slug %}", {
+                    method: 'POST',
+                    headers: {'X-CSRFToken': '{{ csrf_token }}'}, 
+                    body: body});
+                console.log(request);      
+                let response = await request.json();
+                console.log(response)
+                document.querySelector('.likes').innerHTML = '&nbsp&nbsp' + response['likes'] + '&nbsp&nbsp';
+                        
+            };
+        </script>
+    {% endif %}
     <!-- End  -->
 </div>
 {% endblock %}

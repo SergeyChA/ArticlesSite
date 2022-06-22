@@ -35,11 +35,8 @@ class ArticleForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['author', 'text']
-
-        widgets = {'author': forms.TextInput(attrs={'class': 'form-control'}),
-                   'text': forms.Textarea(attrs={'class': 'form-control'})
-        }
+        fields = ['text']
+        widgets = {'text': forms.Textarea(attrs={'class': 'form-control'})}
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(label='Имя пользователя', widget= forms.TextInput(attrs={'class': 'form-control'}))

@@ -36,7 +36,7 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['text']
-        widgets = {'text': forms.Textarea(attrs={'class': 'form-control'})}
+        widgets = {'text': forms.Textarea(attrs={'class': 'form-control','rows': 5})}
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(label='Имя пользователя', widget= forms.TextInput(attrs={'class': 'form-control'}))

@@ -78,7 +78,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, max_length=50, on_delete = models.CASCADE)
     text = models.CharField('текст комментария', max_length=200)
     pub_date = models.DateTimeField('дата публикации', auto_now_add=True, db_index=True)
-    author_avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    
 
     def __str__(self):
         return self.author

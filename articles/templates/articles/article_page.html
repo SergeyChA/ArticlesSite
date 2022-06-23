@@ -32,10 +32,8 @@
                         {{ article.title }}
                     </h5>
                     <small class="text">
-                        {% for state in article.states.all %}
-                            <i class="likes fa-solid fa-thumbs-up fa-lg text-primary">&nbsp&nbsp{{ state.likes }}&nbsp&nbsp</i>
-                            <i class="fa-solid fa-eye fa-lg text-danger">&nbsp&nbsp{{ state.views }}&nbsp&nbsp</i> 
-                        {% endfor %}
+                        <i class="likes fa-solid fa-thumbs-up fa-lg text-primary">&nbsp&nbsp{{ states.likes }}&nbsp&nbsp</i>
+                        <i class="fa-solid fa-eye fa-lg text-danger">&nbsp&nbsp{{ states.views }}&nbsp&nbsp</i> 
                         {{ article.pub_date|date:'d-m-Y  H:i:s' }}   
                     </small>
                     <p class="card-text">
@@ -63,8 +61,8 @@
                         <hr>
                         <div class="row">
                             <div class="col-md-1">
-                                {% if comment.author_avatar %}
-                                <img src="{{ comment.author_avatar.url }}" alt="pic" class="card-img-top">
+                                {% if comment.author.accounts.avatar %}
+                                <img src="{{ comment.author.accounts.avatar.url }}" alt="pic" class="card-img-top">
                                 {% else %}
                                 <img src="/static/images/account_icon.png" class="card-img-top" alt="pic">
                                 {% endif %}

@@ -121,6 +121,7 @@ def articles_list(request):
 class ArticleDetail(View):
     def get(self, request, slug):
         article = get_object_or_404(Article, slug__iexact=slug)
+        states = State.objects.get(article_id=article.pk)
         if not request.session.get(slug):
             article.states.update(views=F('views') + 1)
             request.session[slug] = slug
@@ -128,12 +129,14 @@ class ArticleDetail(View):
 
         obj_list = article.comments.all()
         context = pagination(request, obj_list)
-        context.update({'article': article, 'form': form })
+        context.update({'article': article, 'form': form , 'states': states})
 
         return render(request, 'articles/article_page.html', context=context)
 
     def post(self, request, slug):
         article = get_object_or_404(Article, slug__iexact=slug)
+        states = State.objects.get(article_id=article.pk)
+
         if request.POST.get('statistics') == 'like':
             
             user = User.objects.get(username=request.user)
@@ -141,18 +144,21 @@ class ArticleDetail(View):
                 list_slug = user.accounts.likes_articles.split(',')
                 if article.slug in list_slug:
                     list_slug.remove(article.slug)
-                    article.states.update(likes=F('likes') - 1)
+                    states.likes -= 1
                     user.accounts.likes_articles = ','.join(list_slug)        
                 else:
                     list_slug.append(article.slug)
-                    article.states.update(likes=F('likes') + 1)
+                    states.likes += 1
                     user.accounts.likes_articles = ','.join(list_slug)
             else:
                 user.accounts.likes_articles = article.slug + ','
-                article.states.update(likes=F('likes') + 1)
+                states.likes += 1
             user.accounts.save()
+            states.save()
             
-            likes = str(article.states.get().likes)   
+
+            
+            likes = str(states.likes)  
             return JsonResponse({"likes": likes})
 
         bound_form = CommentForm(request.POST)
@@ -161,7 +167,6 @@ class ArticleDetail(View):
             new_comment.article = article
             author = User.objects.get(username=request.user)
             new_comment.author_id = author.pk
-            new_comment.author_avatar = author.accounts.avatar
             new_comment.save()
         return redirect(article)
         

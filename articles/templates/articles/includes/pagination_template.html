@@ -5,15 +5,15 @@
             <a class="page-link" href="{{ prev_page }}" tabindex="-1" aria-disabled="true">Предыдущая</a>
             </li>
             {% for num in page.paginator.page_range %}
-            {% if page.number == num %}
-                <li class="page-item active" aria-current="page">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-            {% elif num > page.number|add:-4 and num < page.number|add:4 %}
-                <li class="page-item">
-                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                </li>
-            {% endif %}
+                {% if page.number == num %}
+                    <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% elif num > page.number|add:-4 and num < page.number|add:4 %}
+                    <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
             {% endfor %}
             <li class="page-item {% if not next_page %} disabled {% endif %}">
             <a class="page-link" href="{{ next_page }}" tabindex="-1" aria-disabled="true">Следующая</a>

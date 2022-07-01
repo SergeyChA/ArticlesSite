@@ -116,10 +116,8 @@
                 let request = await fetch("{% url 'article_detail_url' slug=article.slug %}", {
                     method: 'POST',
                     headers: {'X-CSRFToken': '{{ csrf_token }}'}, 
-                    body: body});
-                console.log(request);      
+                    body: body});  
                 let response = await request.json();
-                console.log(response)
                 document.querySelector('.likes').innerHTML = '&nbsp&nbsp' + response['likes'] + '&nbsp&nbsp';
                         
             };

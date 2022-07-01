@@ -1,8 +1,5 @@
-from dataclasses import field
-from enum import unique
 from django import forms
 from .models import Article, Tag, Comment, Account
-from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
@@ -25,12 +22,6 @@ class ArticleForm(forms.ModelForm):
                    'body': forms.Textarea(attrs={'class': 'form-control'}),
                    'tags': forms.SelectMultiple(attrs={'class': 'col-md-6 form-control'}),         
         }
-    # Validator
-    # def clean_title(self):
-    #     title = self.cleaned_data['title'] 
-    #     if title[0].isdigit():
-    #         raise ValidationError('ERRRRRORRRR')
-    #     return title
 
 class CommentForm(forms.ModelForm):
     class Meta:

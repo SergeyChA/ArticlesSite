@@ -138,7 +138,7 @@ class ArticleDetail(View):
         states = State.objects.get(article_id=article.pk)
 
         if request.POST.get('statistics') == 'like':
-            
+
             user = User.objects.get(username=request.user)
             if user.accounts.likes_articles:
                 list_slug = user.accounts.likes_articles.split(',')
@@ -158,7 +158,7 @@ class ArticleDetail(View):
             
 
             
-            likes = str(states.likes)  
+            likes = states.likes  
             return JsonResponse({"likes": likes})
 
         bound_form = CommentForm(request.POST)
@@ -168,7 +168,9 @@ class ArticleDetail(View):
             author = User.objects.get(username=request.user)
             new_comment.author_id = author.pk
             new_comment.save()
+
         return redirect(article)
+
         
         
 

@@ -1,4 +1,3 @@
-from tabnanny import verbose
 from django.db import models
 
 from django.urls import reverse
@@ -49,8 +48,6 @@ class Article(models.Model):
     pub_date = models.DateTimeField('дата публикации', auto_now_add=True, db_index=True)
     
     
-    def __str__(self):
-        return self.title
 
     def get_absolute_url(self):
         return reverse('article_detail_url', kwargs={'slug': self.slug})
@@ -80,8 +77,7 @@ class Comment(models.Model):
     pub_date = models.DateTimeField('дата публикации', auto_now_add=True, db_index=True)
     
 
-    def __str__(self):
-        return self.author
+    
 
     class Meta:
         ordering = ['-pub_date']
@@ -93,9 +89,7 @@ class State(models.Model):
     views = models.IntegerField('количество просмотров', default=0)
     likes = models.IntegerField('количество лайков', default=0)
 
-    def __str__(self):
-        return str(self.likes)
-
+    
     class Meta:
         verbose_name = 'Статистика'
         verbose_name_plural = 'Статистика'

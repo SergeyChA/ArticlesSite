@@ -122,6 +122,7 @@ class ArticleDetail(View):
     def get(self, request, slug):
         article = get_object_or_404(Article, slug__iexact=slug)
         states = State.objects.get(article_id=article.pk)
+        print(article.__dict__)
         if not request.session.get(slug):
             article.states.update(views=F('views') + 1)
             request.session[slug] = slug
@@ -155,9 +156,6 @@ class ArticleDetail(View):
                 states.likes += 1
             user.accounts.save()
             states.save()
-            
-
-            
             likes = states.likes  
             return JsonResponse({"likes": likes})
 

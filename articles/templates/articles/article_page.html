@@ -13,7 +13,7 @@
         }
     </style>
 {% endif %}
-<div class="col" style="margin-top: 5rem">
+<div class="col" style="margin-top: 5rem; padding: 0;">
     <div class="card" style="max-width: 1440px; margin: auto;">
         <div class="row no-gutters">
             <div class="col-md-2">
@@ -68,8 +68,8 @@
                                 {% endif %}
                             </div>
                             <div class="col-md-11">
-                                <p><strong>{{ comment.author}}</strong></p>
-                                <p>{{ comment.text}}</p>
+                                <p><strong>{{ comment.author }}</strong></p>
+                                <p>{{ comment.text }}</p>
                                 <p>{{ comment.pub_date|date:'d-m-Y  H:i:s' }}</p>
                             </div>
                         </div>

@@ -34,7 +34,7 @@ class Tag(models.Model):
             super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ['id']
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
    

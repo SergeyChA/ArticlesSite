@@ -14,18 +14,31 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.db import router
+from django.urls import path, include, re_path
 
 from django.conf import settings
 from django.conf.urls.static import static
 
+from articles.API.views import ArticlesDetailView, ArticlesListView
+
 
 from .views import redirect_articles
+
+
+
+
 
 urlpatterns = [
     path('', redirect_articles),
     path('articles/', include('articles.urls')),
     path('admin/', admin.site.urls),
+    path('api/articles/auth/', include('rest_framework.urls')),
+    path('api/articles/', ArticlesListView.as_view()),
+    path('api/articles/<int:pk>', ArticlesDetailView.as_view()),
+    path('api/auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.authtoken')),
+   
 ]
 
 if settings.DEBUG:

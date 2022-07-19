@@ -48,7 +48,9 @@ class Article(models.Model):
     pub_date = models.DateTimeField('дата публикации', auto_now_add=True, db_index=True)
     
     
-
+    def __str__(self):
+        return self.title
+        
     def get_absolute_url(self):
         return reverse('article_detail_url', kwargs={'slug': self.slug})
 

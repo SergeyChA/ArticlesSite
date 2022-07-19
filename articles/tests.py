@@ -20,7 +20,27 @@ class SimpleTests(TestCase):
 
     def test_tags_page_status_code(self):
         response = self.client.get('/articles/tags/')
-        self.assertEqual(response.status_code, 200)  
+        self.assertEqual(response.status_code, 200) 
+
+    def test_tag_create_page_status_code(self):
+        response = self.client.get('/articles/tag/create/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_article_create_page_status_code(self):
+        response = self.client.get('/articles/article/create/')
+        self.assertEqual(response.status_code, 403) 
+
+    def test_article_update_page_status_code(self):
+        response = self.client.get('/articles/article/<str:slug>/update/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_tag_update_page_status_code(self):
+        response = self.client.get('/articles/tag/<str:slug>/update/')
+        self.assertEqual(response.status_code, 403)
+
+    def test_article_detail_page_status_code(self):
+        response = self.client.get('/articles/article/<str:slug>/update/')
+        self.assertEqual(response.status_code, 403)
 
 
 

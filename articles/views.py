@@ -1,6 +1,6 @@
 from django.db.models import F, Q
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View, CreateView, ListView
+from django.views.generic import View
 from django.http import JsonResponse
 from django.urls import reverse
 
@@ -122,7 +122,6 @@ class ArticleDetail(View):
     def get(self, request, slug):
         article = get_object_or_404(Article, slug__iexact=slug)
         states = State.objects.get(article_id=article.pk)
-        print(article.__dict__)
         if not request.session.get(slug):
             article.states.update(views=F('views') + 1)
             request.session[slug] = slug
